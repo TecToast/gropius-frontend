@@ -4,7 +4,7 @@
         :item-manager="itemManager"
         :sort-fields="sortFields"
         :to="() => undefined"
-        :dependencies="modifiedViews"
+        :dependencies="dependencyArray"
         query-param-prefix=""
     >
         <template #item="{ item }">
@@ -52,6 +52,15 @@
                 </template>
             </ListItem>
         </template>
+        <template #additional-filter>
+            <FilterDropdown
+                v-model="templateIds"
+                :item-manager="itemManager"
+                :mapper="(item) => item.filterByTemplate.nodes"
+                label="Template"
+                :fetch-on-search="templateFetch"
+            />
+        </template>
         <CreateViewDialog :project="trackableId" :templates="templates" @created-view="modifiedViews.push($event.id)" />
         <UpdateViewDialog v-model="viewToUpdate" :templates="templates" @updated-view="modifiedViews.push($event.id)" />
     </PaginatedList>
@@ -70,6 +79,8 @@ import { computedAsync } from "@vueuse/core";
 import ConfirmationDialog from "@/components/dialog/ConfirmationDialog.vue";
 import UpdateViewDialog from "@/components/dialog/UpdateViewDialog.vue";
 import { ItemManager } from "@/util/itemManager";
+import { useFilterOption } from "@/util/useFilterOption";
+import FilterDropdown from "@/components/input/FilterDropdown.vue";
 
 type View = NodeReturnType<"getViewList", "Project">["views"]["nodes"][0];
 
@@ -93,6 +104,19 @@ const sortFields = {
     "[Default]": ViewOrderField.Id
 };
 
+const templateIds = useFilterOption("template", true);
+const templateInput = computed(() => {
+    if (templateIds.value.length === 0) {
+        return undefined;
+    } else {
+        return { any: { id: { in: templateIds.value } } };
+    }
+});
+const templateFetch = async (query: string) =>
+    client.searchComponentTemplates({ query: query, count: 100 }).then((res) => res.searchComponentTemplates);
+
+const dependencyArray = computed(() => [modifiedViews, templateInput]);
+
 class ViewItemManager extends ItemManager<View, ViewOrderField> {
     protected async fetchItems(
         filter: string | undefined,
@@ -106,7 +130,8 @@ class ViewItemManager extends ItemManager<View, ViewOrderField> {
                     orderBy,
                     count,
                     skip: page * count,
-                    project: trackableId.value
+                    project: trackableId.value,
+                    filter: { filterByTemplate: templateInput.value }
                 })
             ).node as NodeReturnType<"getViewList", "Project">;
             return [res.views.nodes!, res.views.totalCount];
@@ -114,7 +139,7 @@ class ViewItemManager extends ItemManager<View, ViewOrderField> {
             const res = await client.getFilteredViewList({
                 query: filter,
                 count,
-                project: trackableId.value
+                filter: { filterByTemplate: templateInput.value, project: { id: { eq: trackableId.value } } }
             });
             return [res.searchViews, res.searchViews.length];
         }

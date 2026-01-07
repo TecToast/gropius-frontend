@@ -1,5 +1,6 @@
 <template>
     <PermissionList
+        ref="permissionList"
         :permission-entries="permissionEntries"
         :item-manager="itemManager"
         node-name="ims"
@@ -27,13 +28,14 @@ import {
 } from "@/graphql/generated";
 import { ItemManager } from "@/util/itemManager";
 import { IdObject } from "@/util/types";
-import { computed } from "vue";
+import { computed, useTemplateRef } from "vue";
 import { useRoute } from "vue-router";
 
 const client = useClient();
 const route = useRoute();
 
 const imsId = computed(() => route.params.ims as string);
+const permissionList = useTemplateRef("permissionList");
 
 const permissionEntries = Object.values(ImsPermissionEntry);
 
@@ -49,7 +51,8 @@ class ImsPermissionItemManager extends ItemManager<DefaultImsPermissionInfoFragm
                 orderBy,
                 count,
                 skip: page * count,
-                ims: imsId.value
+                ims: imsId.value,
+                filter: permissionList.value?.userFilter
             });
             const permissions = (res.node as NodeReturnType<"getIMSPermissionList", "IMS">).permissions;
             return [permissions.nodes, permissions.totalCount];
@@ -57,7 +60,10 @@ class ImsPermissionItemManager extends ItemManager<DefaultImsPermissionInfoFragm
             const res = await client.getFilteredIMSPermissionList({
                 query: filter,
                 count,
-                ims: imsId.value
+                filter: {
+                    ...permissionList.value?.userFilter,
+                    nodesWithPermission: { any: { id: { eq: imsId.value } } }
+                }
             });
             return [res.searchIMSPermissions, res.searchIMSPermissions.length];
         }

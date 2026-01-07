@@ -1,5 +1,6 @@
 <template>
     <PermissionList
+        ref="permissionList"
         :permission-entries="permissionEntries"
         :item-manager="itemManager"
         node-name="project"
@@ -26,7 +27,7 @@ import {
     ProjectPermissionOrder
 } from "@/graphql/generated";
 import { IdObject } from "@/util/types";
-import { computed } from "vue";
+import { computed, useTemplateRef } from "vue";
 import { useRoute } from "vue-router";
 import { ItemManager } from "@/util/itemManager";
 
@@ -34,6 +35,7 @@ const client = useClient();
 const route = useRoute();
 
 const projectId = computed(() => route.params.trackable as string);
+const permissionList = useTemplateRef("permissionList");
 
 const permissionEntries = Object.values(ProjectPermissionEntry);
 
@@ -52,7 +54,8 @@ class ProjectPermissionItemManager extends ItemManager<
                 orderBy,
                 count,
                 skip: page * count,
-                project: projectId.value
+                project: projectId.value,
+                filter: permissionList.value?.userFilter
             });
             const permissions = (res.node as NodeReturnType<"getProjectPermissionList", "Project">).permissions;
             return [permissions.nodes, permissions.totalCount];
@@ -60,7 +63,10 @@ class ProjectPermissionItemManager extends ItemManager<
             const res = await client.getFilteredProjectPermissionList({
                 query: filter,
                 count,
-                project: projectId.value
+                filter: {
+                    ...permissionList.value?.userFilter,
+                    nodesWithPermission: { any: { id: { eq: projectId.value } } }
+                }
             });
             return [res.searchProjectPermissions, res.searchProjectPermissions.length];
         }

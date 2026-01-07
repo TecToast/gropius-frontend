@@ -14,11 +14,12 @@ query getInterfaceDefinitionList(
     $orderBy: [InterfaceDefinitionOrder!]!
     $count: Int!
     $skip: Int!
-    $componentVersion: ID!
+    $componentVersion: ID!,
+    $filter: InterfaceDefinitionFilterInput!
 ) {
     node(id: $componentVersion) {
         ... on ComponentVersion {
-            interfaceDefinitions(orderBy: $orderBy, first: $count, skip: $skip) {
+            interfaceDefinitions(orderBy: $orderBy, first: $count, skip: $skip, filter: $filter) {
                 nodes {
                     ...DefaultInterfaceDefinitionInfo
                     interfaceSpecificationVersion {
@@ -28,6 +29,11 @@ query getInterfaceDefinitionList(
                             id
                             name
                             description
+                            template {
+                                id
+                                name
+                                description
+                            }
                         }
                     }
                 }
@@ -37,16 +43,21 @@ query getInterfaceDefinitionList(
     }
 }
 
-query getFilteredInterfaceDefinitionList($query: String!, $count: Int!, $componentVersion: ID!) {
-    searchInterfaceSpecifications(query: $query, first: $count, filter: { versions: { any: { interfaceDefinitions: { any: { componentVersion: { id: { eq: $componentVersion } } } } } } }) {
+query getFilteredInterfaceDefinitionList($query: String!, $count: Int!, $specificationFilter: InterfaceSpecificationFilterInput!, $versionFilter: InterfaceSpecificationVersionFilterInput!, $definitionFilter: InterfaceDefinitionFilterInput!) {
+    searchInterfaceSpecifications(query: $query, first: $count, filter: $specificationFilter) {
         id
         name
         description
-        versions(filter: { interfaceDefinitions: { any: { componentVersion: { id: { eq: $componentVersion } } } } }, first: $count) {
+        template {
+            id
+            name
+            description
+        }
+        versions(filter: $versionFilter, first: $count) {
             nodes {
                 id
                 version
-                interfaceDefinitions(filter: { componentVersion: { id: { eq: $componentVersion } } }) {
+                interfaceDefinitions(filter: $definitionFilter) {
                     nodes {
                         ...DefaultInterfaceDefinitionInfo
                     }

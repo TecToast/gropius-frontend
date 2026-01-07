@@ -1,5 +1,6 @@
 <template>
     <PermissionList
+        ref="permissionList"
         :permission-entries="permissionEntries"
         :item-manager="itemManager"
         node-name="global"
@@ -23,13 +24,14 @@ import {
     GlobalPermissionOrder
 } from "@/graphql/generated";
 import { IdObject } from "@/util/types";
-import { computed } from "vue";
+import { computed, useTemplateRef } from "vue";
 import { useRoute } from "vue-router";
 
 const client = useClient();
 const route = useRoute();
 
 const globalId = computed(() => route.params.trackable as string);
+const permissionList = useTemplateRef("permissionList");
 
 const permissionEntries = Object.values(PermissionEntry);
 
@@ -44,14 +46,16 @@ class PermissionItemManager extends ItemManager<DefaultGlobalPermissionInfoFragm
             const res = await client.getGlobalPermissionList({
                 orderBy,
                 count,
-                skip: page * count
+                skip: page * count,
+                filter: permissionList.value?.userFilter
             });
             const permissions = res.globalPermissions;
             return [permissions.nodes, permissions.totalCount];
         } else {
             const res = await client.getFilteredGlobalPermissionList({
                 query: filter,
-                count
+                count,
+                filter: permissionList.value?.userFilter
             });
             return [res.searchGlobalPermissions, res.searchGlobalPermissions.length];
         }

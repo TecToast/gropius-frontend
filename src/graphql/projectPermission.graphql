@@ -1,7 +1,7 @@
-query getProjectPermissionList($orderBy: [ProjectPermissionOrder!]!, $count: Int!, $skip: Int!, $project: ID!) {
+query getProjectPermissionList($orderBy: [ProjectPermissionOrder!]!, $count: Int!, $skip: Int!, $project: ID!, $filter: ProjectPermissionFilterInput!) {
     node(id: $project) {
         ... on Project {
-            permissions(orderBy: $orderBy, first: $count, skip: $skip) {
+            permissions(orderBy: $orderBy, first: $count, skip: $skip, filter: $filter) {
                 nodes {
                     ...DefaultProjectPermissionInfo
                 }
@@ -11,8 +11,8 @@ query getProjectPermissionList($orderBy: [ProjectPermissionOrder!]!, $count: Int
     }
 }
 
-query getFilteredProjectPermissionList($query: String!, $count: Int!, $project: ID!) {
-    searchProjectPermissions(query: $query, first: $count, filter: { nodesWithPermission: { any: { id: { eq: $project } } } }) {
+query getFilteredProjectPermissionList($query: String!, $count: Int!, $filter: ProjectPermissionFilterInput!) {
+    searchProjectPermissions(query: $query, first: $count, filter: $filter) {
         ...DefaultProjectPermissionInfo
     }
 }
@@ -25,6 +25,10 @@ fragment DefaultProjectPermissionInfo on ProjectPermission {
     allUsers
     users {
         totalCount
+        nodes {
+            id
+            name: displayName
+        }
     }
 }
 

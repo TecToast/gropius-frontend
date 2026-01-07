@@ -3,14 +3,13 @@ query getInterfaceSpecificationList(
     $count: Int!
     $skip: Int!
     $component: ID!
+    $filter: InterfaceSpecificationFilterInput!
 ) {
     node(id: $component) {
         ... on Component {
-            interfaceSpecifications(orderBy: $orderBy, first: $count, skip: $skip) {
+            interfaceSpecifications(orderBy: $orderBy, first: $count, skip: $skip, filter: $filter) {
                 nodes {
-                    id
-                    name
-                    description
+                    ...InterfaceSpecificationListItemInfo
                 }
                 totalCount
             }
@@ -18,8 +17,17 @@ query getInterfaceSpecificationList(
     }
 }
 
-query getFilteredInterfaceSpecificationList($query: String!, $count: Int!, $component: ID!) {
-    searchInterfaceSpecifications(query: $query, first: $count, filter: { component: { id: { eq: $component } } }) {
+query getFilteredInterfaceSpecificationList($query: String!, $count: Int!, $filter: InterfaceSpecificationFilterInput!) {
+    searchInterfaceSpecifications(query: $query, first: $count, filter: $filter) {
+        ...InterfaceSpecificationListItemInfo
+    }
+}
+
+fragment InterfaceSpecificationListItemInfo on InterfaceSpecification {
+    id
+    name
+    description
+    template {
         id
         name
         description

@@ -1,7 +1,7 @@
-query getIMSPermissionList($orderBy: [IMSPermissionOrder!]!, $count: Int!, $skip: Int!, $ims: ID!) {
+query getIMSPermissionList($orderBy: [IMSPermissionOrder!]!, $count: Int!, $skip: Int!, $ims: ID!, $filter: IMSPermissionFilterInput!) {
     node(id: $ims) {
         ... on IMS {
-            permissions(orderBy: $orderBy, first: $count, skip: $skip) {
+            permissions(orderBy: $orderBy, first: $count, skip: $skip, filter: $filter) {
                 nodes {
                     ...DefaultIMSPermissionInfo
                 }
@@ -11,8 +11,8 @@ query getIMSPermissionList($orderBy: [IMSPermissionOrder!]!, $count: Int!, $skip
     }
 }
 
-query getFilteredIMSPermissionList($query: String!, $count: Int!, $ims: ID!) {
-    searchIMSPermissions(query: $query, first: $count, filter: { nodesWithPermission: { any: { id: { eq: $ims } } } }) {
+query getFilteredIMSPermissionList($query: String!, $count: Int!, $filter: IMSPermissionFilterInput!) {
+    searchIMSPermissions(query: $query, first: $count, filter: $filter) {
         ...DefaultIMSPermissionInfo
     }
 }
@@ -25,6 +25,10 @@ fragment DefaultIMSPermissionInfo on IMSPermission {
     allUsers
     users {
         totalCount
+        nodes {
+            id
+            name: displayName
+        }
     }
 }
 

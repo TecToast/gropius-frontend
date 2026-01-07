@@ -1,7 +1,7 @@
-query getComponentPermissionList($orderBy: [ComponentPermissionOrder!]!, $count: Int!, $skip: Int!, $component: ID!) {
+query getComponentPermissionList($orderBy: [ComponentPermissionOrder!]!, $count: Int!, $skip: Int!, $component: ID!, $filter: ComponentPermissionFilterInput!) {
     node(id: $component) {
         ... on Component {
-            permissions(orderBy: $orderBy, first: $count, skip: $skip) {
+            permissions(orderBy: $orderBy, first: $count, skip: $skip, filter: $filter) {
                 nodes {
                     ...DefaultComponentPermissionInfo
                 }
@@ -11,8 +11,12 @@ query getComponentPermissionList($orderBy: [ComponentPermissionOrder!]!, $count:
     }
 }
 
-query getFilteredComponentPermissionList($query: String!, $count: Int!, $component: ID!) {
-    searchComponentPermissions(query: $query, first: $count, filter: { nodesWithPermission: { any: { id: { eq: $component } } } }) {
+query getFilteredComponentPermissionList($query: String!, $count: Int!, $filter: ComponentPermissionFilterInput!) {
+    searchComponentPermissions(
+        query: $query
+        first: $count
+        filter: $filter
+    ) {
         ...DefaultComponentPermissionInfo
     }
 }
@@ -25,11 +29,19 @@ fragment DefaultComponentPermissionInfo on ComponentPermission {
     allUsers
     users {
         totalCount
+        nodes {
+            id
+            name: displayName
+        }
     }
 }
 
 query searchComponentPermissions($component: ID!, $query: String!, $count: Int!) {
-    searchComponentPermissions(query: $query, first: $count, filter: { nodesWithPermission: { any: { id: { eq: $component } } } }) {
+    searchComponentPermissions(
+        query: $query
+        first: $count
+        filter: { nodesWithPermission: { any: { id: { eq: $component } } } }
+    ) {
         ...DefaultComponentPermissionInfo
     }
 }
@@ -47,19 +59,13 @@ query firstComponentPermissions($component: ID!, $count: Int!) {
 }
 
 mutation addComponentPermissionToComponent($component: ID!, $componentPermission: ID!) {
-    updateComponent(input: {
-        id: $component
-        addedPermissions: [$componentPermission]
-    }) {
+    updateComponent(input: { id: $component, addedPermissions: [$componentPermission] }) {
         __typename
     }
 }
 
 mutation removeComponentPermissionFromComponent($component: ID!, $componentPermission: ID!) {
-    updateComponent(input: {
-        id: $component
-        removedPermissions: [$componentPermission]
-    }) {
+    updateComponent(input: { id: $component, removedPermissions: [$componentPermission] }) {
         __typename
     }
 }

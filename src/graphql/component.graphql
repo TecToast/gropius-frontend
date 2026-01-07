@@ -1,28 +1,34 @@
-query getComponentList($orderBy: [ComponentOrder!]!, $count: Int!, $skip: Int!) {
-    components(orderBy: $orderBy, first: $count, skip: $skip) {
+query getComponentList($orderBy: [ComponentOrder!]!, $count: Int!, $skip: Int!, $filter: ComponentFilterInput!) {
+    components(orderBy: $orderBy, first: $count, skip: $skip, filter: $filter) {
         nodes {
-            id
-            name
-            description
-            ...OpenIssueCount
+            ...ComponentListItemInfo
         }
         totalCount
     }
 }
 
-query getFilteredComponentList($query: String!, $count: Int!) {
-    searchComponents(query: $query, first: $count) {
+query getFilteredComponentList($query: String!, $count: Int!, $filter: ComponentFilterInput!) {
+    searchComponents(query: $query, first: $count, filter: $filter) {
+        ...ComponentListItemInfo
+    }
+}
+
+fragment ComponentListItemInfo on Component {
+    id
+    name
+    description
+    template {
         id
         name
         description
-        ...OpenIssueCount
     }
+    ...OpenIssueCount
 }
 
 query getComponent($id: ID!) {
     node(id: $id) {
         id
-        ...on Component {
+        ... on Component {
             __typename
             name
             description
@@ -39,7 +45,7 @@ query getComponent($id: ID!) {
 query getComponentDetails($id: ID!) {
     node(id: $id) {
         id
-        ...on Component {
+        ... on Component {
             name
             description
             issues(orderBy: [{ field: LAST_UPDATED_AT, direction: DESC }], first: 20) {
@@ -59,7 +65,7 @@ query getComponentDetails($id: ID!) {
 query getComponentTemplateDetails($id: ID!) {
     node(id: $id) {
         id
-        ...on Component {
+        ... on Component {
             template {
                 id
             }
@@ -70,7 +76,7 @@ query getComponentTemplateDetails($id: ID!) {
 query getComponentGeneralDetails($id: ID!) {
     node(id: $id) {
         id
-        ...on Component {
+        ... on Component {
             name
             description
             repositoryURL

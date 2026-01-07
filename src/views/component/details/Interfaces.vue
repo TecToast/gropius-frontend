@@ -5,12 +5,22 @@
         :sort-fields="sortFields"
         :to="(interfaceSpecification: InterfaceSpecification) => interfaceSpecificationRoute(interfaceSpecification)"
         query-param-prefix=""
+        :dependencies="dependencyArray"
     >
         <template #item="{ item }">
             <ListItem
                 :title="item.name"
                 :subtitle="item.description || 'No description provided'"
                 :italic-subtitle="!item.description"
+            />
+        </template>
+        <template #additional-filter>
+            <FilterDropdown
+                v-model="templateIds"
+                :item-manager="itemManager"
+                :mapper="(item) => item.template"
+                label="Template"
+                :fetch-on-search="templateFetch"
             />
         </template>
         <CreateInterfaceSpecificationDialog
@@ -26,7 +36,11 @@
 <script lang="ts" setup>
 import PaginatedList from "@/components/PaginatedList.vue";
 import { NodeReturnType, useClient } from "@/graphql/client";
-import { InterfaceSpecificationOrder, InterfaceSpecificationOrderField } from "@/graphql/generated";
+import {
+    InterfaceSpecificationFilterInput,
+    InterfaceSpecificationOrder,
+    InterfaceSpecificationOrderField
+} from "@/graphql/generated";
 import { RouteLocationRaw, useRoute, useRouter } from "vue-router";
 import ListItem from "@/components/ListItem.vue";
 import CreateInterfaceSpecificationDialog from "@/components/dialog/CreateInterfaceSpecificationDialog.vue";
@@ -35,6 +49,8 @@ import { computed } from "vue";
 import { computedAsync } from "@vueuse/core";
 import { withErrorMessage } from "@/util/withErrorMessage";
 import { ItemManager } from "@/util/itemManager";
+import { useFilterOption } from "@/util/useFilterOption";
+import FilterDropdown from "@/components/input/FilterDropdown.vue";
 
 type InterfaceSpecification = NodeReturnType<
     "getInterfaceSpecificationList",
@@ -63,6 +79,30 @@ const sortFields = {
     "[Default]": InterfaceSpecificationOrderField.Id
 };
 
+const templateIds = useFilterOption("template", true);
+const templateInput = computed<InterfaceSpecificationFilterInput | undefined>(() => {
+    if (templateIds.value.length === 0) {
+        return undefined;
+    }
+    return {
+        id: { in: templateIds.value }
+    };
+});
+const dependencyArray = computed(() => [templateInput])
+const templateFetch = async (search: string) =>
+    client
+        .searchInterfaceSpecificationTemplates({
+            query: search,
+            count: 100
+        })
+        .then((res) =>
+            res.searchInterfaceSpecificationTemplates.map((t) => ({
+                id: t.id,
+                name: t.name,
+                description: t.description
+            }))
+        );
+
 class InterfaceItemManager extends ItemManager<InterfaceSpecification, InterfaceSpecificationOrderField> {
     protected async fetchItems(
         filter: string,
@@ -76,6 +116,7 @@ class InterfaceItemManager extends ItemManager<InterfaceSpecification, Interface
                     orderBy,
                     count,
                     skip: page * count,
+                    filter: { template: templateInput.value },
                     component: trackableId.value
                 })
             ).node as NodeReturnType<"getInterfaceSpecificationList", "Component">;
@@ -84,7 +125,10 @@ class InterfaceItemManager extends ItemManager<InterfaceSpecification, Interface
             const res = await client.getFilteredInterfaceSpecificationList({
                 query: filter,
                 count,
-                component: trackableId.value
+                filter: {
+                    component: { id: { eq: trackableId.value } },
+                    template: templateInput.value
+                }
             });
             return [res.searchInterfaceSpecifications, res.searchInterfaceSpecifications.length];
         }

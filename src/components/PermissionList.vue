@@ -4,7 +4,7 @@
         :item-manager="itemManager"
         :sort-fields="permissionSortFields"
         :to="() => undefined"
-        :dependencies="[permissionDependencyCounter]"
+        :dependencies="[permissionDependencyCounter, userFilter]"
         query-param-prefix=""
     >
         <template #item="{ item }">
@@ -62,6 +62,18 @@
                 </template>
             </ListItem>
         </template>
+        <template #additional-filter>
+            <div class="d-flex ga-2 align-center h-100">
+                <v-switch v-model="allUsers" label="Show only permissions for all users" :inset="false" />
+                <FilterDropdown
+                    v-model="users"
+                    label="User"
+                    :item-manager="itemManager"
+                    :mapper="(item) => item.users.nodes"
+                    :fetch-on-search="userFetch"
+                />
+            </div>
+        </template>
         <CreatePermissionDialog
             :create-permission="createPermission"
             :permission-entries="permissionEntries"
@@ -92,7 +104,7 @@
             description: string;
             entries: E[];
             allUsers: boolean;
-            users: { totalCount: number };
+            users: { totalCount: number; nodes: { id: string; name: string }[] };
         }
     "
 >
@@ -102,13 +114,17 @@ import ConfirmationDialog from "@/components/dialog/ConfirmationDialog.vue";
 import { enumToRegularCase } from "@/util/casingTransformers";
 import { permissionSortFields } from "@/util/permissionSortFields";
 import { withErrorMessage } from "@/util/withErrorMessage";
-import { PropType } from "vue";
+import { computed, PropType, watch } from "vue";
 import { ref } from "vue";
 import ManagePermissionUsersDialog from "./dialog/ManagePermissionUsersDialog.vue";
 import { IdObject, ValueOf } from "@/util/types";
 import CreatePermissionDialog from "./dialog/CreatePermissionDialog.vue";
 import UpdatePermissionDialog from "./dialog/UpdatePermissionDialog.vue";
 import { ItemManager } from "@/util/itemManager";
+import FilterDropdown from "@/components/input/FilterDropdown.vue";
+import { useFilterOption } from "@/util/useFilterOption";
+import { useClient } from "@/graphql/client";
+import { GlobalPermissionFilterInput } from "@/graphql/generated";
 
 export type UpdatePermissionFunctionInput<T> = IdObject &
     Partial<{
@@ -174,6 +190,38 @@ async function removePermission(permissionId: string) {
 function importedPermission(permission: IdObject) {
     permissionDependencyCounter.value++;
 }
+
+const allUsers = ref<boolean>(false);
+const users = useFilterOption("users", true);
+watch(allUsers, (newVal) => {
+    if (newVal) {
+        users.value = [];
+    }
+});
+watch(users, (newVal) => {
+    if (newVal.length > 0) {
+        allUsers.value = false;
+    }
+});
+const userFilter = computed(() => {
+    const filter: GlobalPermissionFilterInput = {};
+    if (allUsers.value) {
+        filter.allUsers = { eq: true };
+    }
+    if (users.value.length > 0) {
+        filter.users = { any: { id: { in: users.value } } };
+    }
+    return Object.keys(filter).length > 0 ? filter : undefined;
+});
+const client = useClient();
+const userFetch = async (search: string) =>
+    client
+        .searchGropiusUsers({ query: search, count: 100 })
+        .then((res) => res.searchGropiusUsers.map((u) => ({ id: u.id, name: u.username })));
+
+defineExpose({
+    userFilter
+});
 </script>
 <style scoped lang="scss">
 @use "@/styles/settings.scss";

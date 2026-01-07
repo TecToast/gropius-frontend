@@ -4,18 +4,28 @@ fragment DefaultIMSInfo on IMS {
     description
 }
 
-query getIMSList($orderBy: [IMSOrder!]!, $count: Int!, $skip: Int!) {
-    imss(orderBy: $orderBy, first: $count, skip: $skip) {
+query getIMSList($orderBy: [IMSOrder!]!, $count: Int!, $skip: Int!, $filter: IMSFilterInput!) {
+    imss(orderBy: $orderBy, first: $count, skip: $skip, filter: $filter) {
         nodes {
             ...DefaultSyncPermissionTargetInfo
+            template {
+                id
+                name
+                description
+            }
         }
         totalCount
     }
 }
 
-query getFilteredIMSList($query: String!, $count: Int!) {
-    searchIMSs(query: $query, first: $count) {
+query getFilteredIMSList($query: String!, $count: Int!, $filter: IMSFilterInput!) {
+    searchIMSs(query: $query, first: $count, filter: $filter) {
         ...DefaultSyncPermissionTargetInfo
+        template {
+            id
+            name
+            description
+        }
     }
 }
 

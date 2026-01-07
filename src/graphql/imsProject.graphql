@@ -5,6 +5,11 @@ fragment DefaultIMSProjectInfo on IMSProject {
     ims {
         id
         name
+        template {
+            id
+            name
+            description
+        }
     }
     ...DefaultSyncPermissionTargetInfo
 }
@@ -22,10 +27,10 @@ query getIMSProjectListFromIMS($orderBy: [IMSProjectOrder!]!, $count: Int!, $ski
     }
 }
 
-query getIMSProjectListFromTrackable($orderBy: [IMSProjectOrder!]!, $count: Int!, $skip: Int!, $trackable: ID!) {
+query getIMSProjectListFromTrackable($orderBy: [IMSProjectOrder!]!, $count: Int!, $skip: Int!, $trackable: ID!, $filter: IMSProjectFilterInput!) {
     node(id: $trackable) {
         ... on Trackable {
-            syncsTo(orderBy: $orderBy, first: $count, skip: $skip) {
+            syncsTo(orderBy: $orderBy, first: $count, skip: $skip, filter: $filter) {
                 nodes {
                     ...DefaultIMSProjectInfo
                 }

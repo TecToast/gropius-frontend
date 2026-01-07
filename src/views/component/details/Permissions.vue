@@ -1,5 +1,6 @@
 <template>
     <PermissionList
+        ref="permissionList"
         :permission-entries="permissionEntries"
         :item-manager="itemManager"
         node-name="component"
@@ -30,13 +31,14 @@ import {
 } from "@/graphql/generated";
 import { ItemManager } from "@/util/itemManager";
 import { IdObject } from "@/util/types";
-import { computed } from "vue";
+import { computed, useTemplateRef } from "vue";
 import { useRoute } from "vue-router";
 
 const client = useClient();
 const route = useRoute();
 
 const componentId = computed(() => route.params.trackable as string);
+const permissionList = useTemplateRef("permissionList");
 
 const permissionEntries = Object.values(ComponentPermissionEntry);
 
@@ -55,7 +57,8 @@ class ComponentPermissionItemManager extends ItemManager<
                 orderBy,
                 count,
                 skip: page * count,
-                component: componentId.value
+                component: componentId.value,
+                filter: permissionList.value?.userFilter
             });
             const permissions = (res.node as NodeReturnType<"getComponentPermissionList", "Component">).permissions;
             return [permissions.nodes, permissions.totalCount];
@@ -63,7 +66,10 @@ class ComponentPermissionItemManager extends ItemManager<
             const res = await client.getFilteredComponentPermissionList({
                 query: filter,
                 count,
-                component: componentId.value
+                filter: {
+                    ...permissionList.value?.userFilter,
+                    nodesWithPermission: { any: { id: { eq: componentId.value } } }
+                }
             });
             return [res.searchComponentPermissions, res.searchComponentPermissions.length];
         }

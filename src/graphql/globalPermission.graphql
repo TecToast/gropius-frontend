@@ -1,5 +1,5 @@
-query getGlobalPermissionList($orderBy: [GlobalPermissionOrder!]!, $count: Int!, $skip: Int!) {
-    globalPermissions(orderBy: $orderBy, first: $count, skip: $skip) {
+query getGlobalPermissionList($orderBy: [GlobalPermissionOrder!]!, $count: Int!, $skip: Int!, $filter: GlobalPermissionFilterInput) {
+    globalPermissions(orderBy: $orderBy, first: $count, skip: $skip, filter: $filter) {
         nodes {
             ...DefaultGlobalPermissionInfo
         }
@@ -7,8 +7,8 @@ query getGlobalPermissionList($orderBy: [GlobalPermissionOrder!]!, $count: Int!,
     }  
 }
 
-query getFilteredGlobalPermissionList($query: String!, $count: Int!) {
-    searchGlobalPermissions(query: $query, first: $count) {
+query getFilteredGlobalPermissionList($query: String!, $count: Int!, $filter: GlobalPermissionFilterInput!) {
+    searchGlobalPermissions(query: $query, first: $count, filter: $filter) {
         ...DefaultGlobalPermissionInfo
     }
 }
@@ -21,6 +21,10 @@ fragment DefaultGlobalPermissionInfo on GlobalPermission {
     allUsers
     users {
         totalCount
+        nodes {
+            id
+            name: displayName
+        }
     }
 }
 

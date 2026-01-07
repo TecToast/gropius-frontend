@@ -18488,6 +18488,7 @@ export type GetComponentListQueryVariables = Exact<{
     orderBy: Array<ComponentOrder> | ComponentOrder;
     count: Scalars["Int"]["input"];
     skip: Scalars["Int"]["input"];
+    filter: ComponentFilterInput;
 }>;
 
 export type GetComponentListQuery = {
@@ -18500,6 +18501,7 @@ export type GetComponentListQuery = {
             id: string;
             name: string;
             description: string;
+            template: { __typename?: "ComponentTemplate"; id: string; name: string; description: string };
             openIssues: { __typename?: "IssueConnection"; totalCount: number };
         }>;
     };
@@ -18508,6 +18510,7 @@ export type GetComponentListQuery = {
 export type GetFilteredComponentListQueryVariables = Exact<{
     query: Scalars["String"]["input"];
     count: Scalars["Int"]["input"];
+    filter: ComponentFilterInput;
 }>;
 
 export type GetFilteredComponentListQuery = {
@@ -18517,8 +18520,18 @@ export type GetFilteredComponentListQuery = {
         id: string;
         name: string;
         description: string;
+        template: { __typename?: "ComponentTemplate"; id: string; name: string; description: string };
         openIssues: { __typename?: "IssueConnection"; totalCount: number };
     }>;
+};
+
+export type ComponentListItemInfoFragment = {
+    __typename?: "Component";
+    id: string;
+    name: string;
+    description: string;
+    template: { __typename?: "ComponentTemplate"; id: string; name: string; description: string };
+    openIssues: { __typename?: "IssueConnection"; totalCount: number };
 };
 
 export type GetComponentQueryVariables = Exact<{
@@ -19142,6 +19155,7 @@ export type GetComponentPermissionListQueryVariables = Exact<{
     count: Scalars["Int"]["input"];
     skip: Scalars["Int"]["input"];
     component: Scalars["ID"]["input"];
+    filter: ComponentPermissionFilterInput;
 }>;
 
 export type GetComponentPermissionListQuery = {
@@ -19172,7 +19186,11 @@ export type GetComponentPermissionListQuery = {
                       description: string;
                       entries: Array<ComponentPermissionEntry>;
                       allUsers: boolean;
-                      users: { __typename?: "GropiusUserConnection"; totalCount: number };
+                      users: {
+                          __typename?: "GropiusUserConnection";
+                          totalCount: number;
+                          nodes: Array<{ __typename?: "GropiusUser"; id: string; name: string }>;
+                      };
                   }>;
               };
           }
@@ -19247,7 +19265,7 @@ export type GetComponentPermissionListQuery = {
 export type GetFilteredComponentPermissionListQueryVariables = Exact<{
     query: Scalars["String"]["input"];
     count: Scalars["Int"]["input"];
-    component: Scalars["ID"]["input"];
+    filter: ComponentPermissionFilterInput;
 }>;
 
 export type GetFilteredComponentPermissionListQuery = {
@@ -19259,7 +19277,11 @@ export type GetFilteredComponentPermissionListQuery = {
         description: string;
         entries: Array<ComponentPermissionEntry>;
         allUsers: boolean;
-        users: { __typename?: "GropiusUserConnection"; totalCount: number };
+        users: {
+            __typename?: "GropiusUserConnection";
+            totalCount: number;
+            nodes: Array<{ __typename?: "GropiusUser"; id: string; name: string }>;
+        };
     }>;
 };
 
@@ -19270,7 +19292,11 @@ export type DefaultComponentPermissionInfoFragment = {
     description: string;
     entries: Array<ComponentPermissionEntry>;
     allUsers: boolean;
-    users: { __typename?: "GropiusUserConnection"; totalCount: number };
+    users: {
+        __typename?: "GropiusUserConnection";
+        totalCount: number;
+        nodes: Array<{ __typename?: "GropiusUser"; id: string; name: string }>;
+    };
 };
 
 export type SearchComponentPermissionsQueryVariables = Exact<{
@@ -19288,7 +19314,11 @@ export type SearchComponentPermissionsQuery = {
         description: string;
         entries: Array<ComponentPermissionEntry>;
         allUsers: boolean;
-        users: { __typename?: "GropiusUserConnection"; totalCount: number };
+        users: {
+            __typename?: "GropiusUserConnection";
+            totalCount: number;
+            nodes: Array<{ __typename?: "GropiusUser"; id: string; name: string }>;
+        };
     }>;
 };
 
@@ -19324,7 +19354,11 @@ export type FirstComponentPermissionsQuery = {
                       description: string;
                       entries: Array<ComponentPermissionEntry>;
                       allUsers: boolean;
-                      users: { __typename?: "GropiusUserConnection"; totalCount: number };
+                      users: {
+                          __typename?: "GropiusUserConnection";
+                          totalCount: number;
+                          nodes: Array<{ __typename?: "GropiusUser"; id: string; name: string }>;
+                      };
                   }>;
               };
           }
@@ -20178,6 +20212,7 @@ export type GetGlobalPermissionListQueryVariables = Exact<{
     orderBy: Array<GlobalPermissionOrder> | GlobalPermissionOrder;
     count: Scalars["Int"]["input"];
     skip: Scalars["Int"]["input"];
+    filter?: InputMaybe<GlobalPermissionFilterInput>;
 }>;
 
 export type GetGlobalPermissionListQuery = {
@@ -20192,7 +20227,11 @@ export type GetGlobalPermissionListQuery = {
             description: string;
             entries: Array<PermissionEntry>;
             allUsers: boolean;
-            users: { __typename?: "GropiusUserConnection"; totalCount: number };
+            users: {
+                __typename?: "GropiusUserConnection";
+                totalCount: number;
+                nodes: Array<{ __typename?: "GropiusUser"; id: string; name: string }>;
+            };
         }>;
     };
 };
@@ -20200,6 +20239,7 @@ export type GetGlobalPermissionListQuery = {
 export type GetFilteredGlobalPermissionListQueryVariables = Exact<{
     query: Scalars["String"]["input"];
     count: Scalars["Int"]["input"];
+    filter: GlobalPermissionFilterInput;
 }>;
 
 export type GetFilteredGlobalPermissionListQuery = {
@@ -20211,7 +20251,11 @@ export type GetFilteredGlobalPermissionListQuery = {
         description: string;
         entries: Array<PermissionEntry>;
         allUsers: boolean;
-        users: { __typename?: "GropiusUserConnection"; totalCount: number };
+        users: {
+            __typename?: "GropiusUserConnection";
+            totalCount: number;
+            nodes: Array<{ __typename?: "GropiusUser"; id: string; name: string }>;
+        };
     }>;
 };
 
@@ -20222,7 +20266,11 @@ export type DefaultGlobalPermissionInfoFragment = {
     description: string;
     entries: Array<PermissionEntry>;
     allUsers: boolean;
-    users: { __typename?: "GropiusUserConnection"; totalCount: number };
+    users: {
+        __typename?: "GropiusUserConnection";
+        totalCount: number;
+        nodes: Array<{ __typename?: "GropiusUser"; id: string; name: string }>;
+    };
 };
 
 export type DeleteGlobalPermissionMutationVariables = Exact<{
@@ -21021,6 +21069,7 @@ export type GetImsListQueryVariables = Exact<{
     orderBy: Array<ImsOrder> | ImsOrder;
     count: Scalars["Int"]["input"];
     skip: Scalars["Int"]["input"];
+    filter: ImsFilterInput;
 }>;
 
 export type GetImsListQuery = {
@@ -21035,6 +21084,7 @@ export type GetImsListQuery = {
             description: string;
             isSyncSelfAllowed: boolean;
             isSyncOthersAllowed: boolean;
+            template: { __typename?: "IMSTemplate"; id: string; name: string; description: string };
         }>;
     };
 };
@@ -21042,6 +21092,7 @@ export type GetImsListQuery = {
 export type GetFilteredImsListQueryVariables = Exact<{
     query: Scalars["String"]["input"];
     count: Scalars["Int"]["input"];
+    filter: ImsFilterInput;
 }>;
 
 export type GetFilteredImsListQuery = {
@@ -21053,6 +21104,7 @@ export type GetFilteredImsListQuery = {
         description: string;
         isSyncSelfAllowed: boolean;
         isSyncOthersAllowed: boolean;
+        template: { __typename?: "IMSTemplate"; id: string; name: string; description: string };
     }>;
 };
 
@@ -21298,6 +21350,7 @@ export type GetImsPermissionListQueryVariables = Exact<{
     count: Scalars["Int"]["input"];
     skip: Scalars["Int"]["input"];
     ims: Scalars["ID"]["input"];
+    filter: ImsPermissionFilterInput;
 }>;
 
 export type GetImsPermissionListQuery = {
@@ -21336,7 +21389,11 @@ export type GetImsPermissionListQuery = {
                       description: string;
                       entries: Array<ImsPermissionEntry>;
                       allUsers: boolean;
-                      users: { __typename?: "GropiusUserConnection"; totalCount: number };
+                      users: {
+                          __typename?: "GropiusUserConnection";
+                          totalCount: number;
+                          nodes: Array<{ __typename?: "GropiusUser"; id: string; name: string }>;
+                      };
                   }>;
               };
           }
@@ -21403,7 +21460,7 @@ export type GetImsPermissionListQuery = {
 export type GetFilteredImsPermissionListQueryVariables = Exact<{
     query: Scalars["String"]["input"];
     count: Scalars["Int"]["input"];
-    ims: Scalars["ID"]["input"];
+    filter: ImsPermissionFilterInput;
 }>;
 
 export type GetFilteredImsPermissionListQuery = {
@@ -21415,7 +21472,11 @@ export type GetFilteredImsPermissionListQuery = {
         description: string;
         entries: Array<ImsPermissionEntry>;
         allUsers: boolean;
-        users: { __typename?: "GropiusUserConnection"; totalCount: number };
+        users: {
+            __typename?: "GropiusUserConnection";
+            totalCount: number;
+            nodes: Array<{ __typename?: "GropiusUser"; id: string; name: string }>;
+        };
     }>;
 };
 
@@ -21426,7 +21487,11 @@ export type DefaultImsPermissionInfoFragment = {
     description: string;
     entries: Array<ImsPermissionEntry>;
     allUsers: boolean;
-    users: { __typename?: "GropiusUserConnection"; totalCount: number };
+    users: {
+        __typename?: "GropiusUserConnection";
+        totalCount: number;
+        nodes: Array<{ __typename?: "GropiusUser"; id: string; name: string }>;
+    };
 };
 
 export type SearchImsPermissionsQueryVariables = Exact<{
@@ -21444,7 +21509,11 @@ export type SearchImsPermissionsQuery = {
         description: string;
         entries: Array<ImsPermissionEntry>;
         allUsers: boolean;
-        users: { __typename?: "GropiusUserConnection"; totalCount: number };
+        users: {
+            __typename?: "GropiusUserConnection";
+            totalCount: number;
+            nodes: Array<{ __typename?: "GropiusUser"; id: string; name: string }>;
+        };
     }>;
 };
 
@@ -21488,7 +21557,11 @@ export type FirstImsPermissionsQuery = {
                       description: string;
                       entries: Array<ImsPermissionEntry>;
                       allUsers: boolean;
-                      users: { __typename?: "GropiusUserConnection"; totalCount: number };
+                      users: {
+                          __typename?: "GropiusUserConnection";
+                          totalCount: number;
+                          nodes: Array<{ __typename?: "GropiusUser"; id: string; name: string }>;
+                      };
                   }>;
               };
           }
@@ -21597,7 +21670,12 @@ export type DefaultImsProjectInfoFragment = {
     description: string;
     isSyncSelfAllowed: boolean;
     isSyncOthersAllowed: boolean;
-    ims?: { __typename?: "IMS"; id: string; name: string } | null;
+    ims?: {
+        __typename?: "IMS";
+        id: string;
+        name: string;
+        template: { __typename?: "IMSTemplate"; id: string; name: string; description: string };
+    } | null;
 };
 
 export type GetImsProjectListFromImsQueryVariables = Exact<{
@@ -21643,7 +21721,12 @@ export type GetImsProjectListFromImsQuery = {
                       description: string;
                       isSyncSelfAllowed: boolean;
                       isSyncOthersAllowed: boolean;
-                      ims?: { __typename?: "IMS"; id: string; name: string } | null;
+                      ims?: {
+                          __typename?: "IMS";
+                          id: string;
+                          name: string;
+                          template: { __typename?: "IMSTemplate"; id: string; name: string; description: string };
+                      } | null;
                   }>;
               };
           }
@@ -21712,6 +21795,7 @@ export type GetImsProjectListFromTrackableQueryVariables = Exact<{
     count: Scalars["Int"]["input"];
     skip: Scalars["Int"]["input"];
     trackable: Scalars["ID"]["input"];
+    filter: ImsProjectFilterInput;
 }>;
 
 export type GetImsProjectListFromTrackableQuery = {
@@ -21742,7 +21826,12 @@ export type GetImsProjectListFromTrackableQuery = {
                       description: string;
                       isSyncSelfAllowed: boolean;
                       isSyncOthersAllowed: boolean;
-                      ims?: { __typename?: "IMS"; id: string; name: string } | null;
+                      ims?: {
+                          __typename?: "IMS";
+                          id: string;
+                          name: string;
+                          template: { __typename?: "IMSTemplate"; id: string; name: string; description: string };
+                      } | null;
                   }>;
               };
           }
@@ -21799,7 +21888,12 @@ export type GetImsProjectListFromTrackableQuery = {
                       description: string;
                       isSyncSelfAllowed: boolean;
                       isSyncOthersAllowed: boolean;
-                      ims?: { __typename?: "IMS"; id: string; name: string } | null;
+                      ims?: {
+                          __typename?: "IMS";
+                          id: string;
+                          name: string;
+                          template: { __typename?: "IMSTemplate"; id: string; name: string; description: string };
+                      } | null;
                   }>;
               };
           }
@@ -21844,7 +21938,12 @@ export type GetFilteredImsProjectListQuery = {
         description: string;
         isSyncSelfAllowed: boolean;
         isSyncOthersAllowed: boolean;
-        ims?: { __typename?: "IMS"; id: string; name: string } | null;
+        ims?: {
+            __typename?: "IMS";
+            id: string;
+            name: string;
+            template: { __typename?: "IMSTemplate"; id: string; name: string; description: string };
+        } | null;
     }>;
 };
 
@@ -22242,6 +22341,7 @@ export type GetInterfaceDefinitionListQueryVariables = Exact<{
     count: Scalars["Int"]["input"];
     skip: Scalars["Int"]["input"];
     componentVersion: Scalars["ID"]["input"];
+    filter: InterfaceDefinitionFilterInput;
 }>;
 
 export type GetInterfaceDefinitionListQuery = {
@@ -22282,6 +22382,12 @@ export type GetInterfaceDefinitionListQuery = {
                               id: string;
                               name: string;
                               description: string;
+                              template: {
+                                  __typename?: "InterfaceSpecificationTemplate";
+                                  id: string;
+                                  name: string;
+                                  description: string;
+                              };
                           };
                       };
                       visibleDerivedBy: { __typename?: "RelationConnection"; totalCount: number };
@@ -22357,7 +22463,9 @@ export type GetInterfaceDefinitionListQuery = {
 export type GetFilteredInterfaceDefinitionListQueryVariables = Exact<{
     query: Scalars["String"]["input"];
     count: Scalars["Int"]["input"];
-    componentVersion: Scalars["ID"]["input"];
+    specificationFilter: InterfaceSpecificationFilterInput;
+    versionFilter: InterfaceSpecificationVersionFilterInput;
+    definitionFilter: InterfaceDefinitionFilterInput;
 }>;
 
 export type GetFilteredInterfaceDefinitionListQuery = {
@@ -22367,6 +22475,7 @@ export type GetFilteredInterfaceDefinitionListQuery = {
         id: string;
         name: string;
         description: string;
+        template: { __typename?: "InterfaceSpecificationTemplate"; id: string; name: string; description: string };
         versions: {
             __typename?: "InterfaceSpecificationVersionConnection";
             nodes: Array<{
@@ -22416,6 +22525,7 @@ export type GetInterfaceSpecificationListQueryVariables = Exact<{
     count: Scalars["Int"]["input"];
     skip: Scalars["Int"]["input"];
     component: Scalars["ID"]["input"];
+    filter: InterfaceSpecificationFilterInput;
 }>;
 
 export type GetInterfaceSpecificationListQuery = {
@@ -22444,6 +22554,12 @@ export type GetInterfaceSpecificationListQuery = {
                       id: string;
                       name: string;
                       description: string;
+                      template: {
+                          __typename?: "InterfaceSpecificationTemplate";
+                          id: string;
+                          name: string;
+                          description: string;
+                      };
                   }>;
               };
           }
@@ -22518,7 +22634,7 @@ export type GetInterfaceSpecificationListQuery = {
 export type GetFilteredInterfaceSpecificationListQueryVariables = Exact<{
     query: Scalars["String"]["input"];
     count: Scalars["Int"]["input"];
-    component: Scalars["ID"]["input"];
+    filter: InterfaceSpecificationFilterInput;
 }>;
 
 export type GetFilteredInterfaceSpecificationListQuery = {
@@ -22528,7 +22644,16 @@ export type GetFilteredInterfaceSpecificationListQuery = {
         id: string;
         name: string;
         description: string;
+        template: { __typename?: "InterfaceSpecificationTemplate"; id: string; name: string; description: string };
     }>;
+};
+
+export type InterfaceSpecificationListItemInfoFragment = {
+    __typename?: "InterfaceSpecification";
+    id: string;
+    name: string;
+    description: string;
+    template: { __typename?: "InterfaceSpecificationTemplate"; id: string; name: string; description: string };
 };
 
 export type GetInterfaceSpecificationGeneralDetailsQueryVariables = Exact<{
@@ -29204,6 +29329,7 @@ export type GetProjectPermissionListQueryVariables = Exact<{
     count: Scalars["Int"]["input"];
     skip: Scalars["Int"]["input"];
     project: Scalars["ID"]["input"];
+    filter: ProjectPermissionFilterInput;
 }>;
 
 export type GetProjectPermissionListQuery = {
@@ -29276,7 +29402,11 @@ export type GetProjectPermissionListQuery = {
                       description: string;
                       entries: Array<ProjectPermissionEntry>;
                       allUsers: boolean;
-                      users: { __typename?: "GropiusUserConnection"; totalCount: number };
+                      users: {
+                          __typename?: "GropiusUserConnection";
+                          totalCount: number;
+                          nodes: Array<{ __typename?: "GropiusUser"; id: string; name: string }>;
+                      };
                   }>;
               };
           }
@@ -29309,7 +29439,7 @@ export type GetProjectPermissionListQuery = {
 export type GetFilteredProjectPermissionListQueryVariables = Exact<{
     query: Scalars["String"]["input"];
     count: Scalars["Int"]["input"];
-    project: Scalars["ID"]["input"];
+    filter: ProjectPermissionFilterInput;
 }>;
 
 export type GetFilteredProjectPermissionListQuery = {
@@ -29321,7 +29451,11 @@ export type GetFilteredProjectPermissionListQuery = {
         description: string;
         entries: Array<ProjectPermissionEntry>;
         allUsers: boolean;
-        users: { __typename?: "GropiusUserConnection"; totalCount: number };
+        users: {
+            __typename?: "GropiusUserConnection";
+            totalCount: number;
+            nodes: Array<{ __typename?: "GropiusUser"; id: string; name: string }>;
+        };
     }>;
 };
 
@@ -29332,7 +29466,11 @@ export type DefaultProjectPermissionInfoFragment = {
     description: string;
     entries: Array<ProjectPermissionEntry>;
     allUsers: boolean;
-    users: { __typename?: "GropiusUserConnection"; totalCount: number };
+    users: {
+        __typename?: "GropiusUserConnection";
+        totalCount: number;
+        nodes: Array<{ __typename?: "GropiusUser"; id: string; name: string }>;
+    };
 };
 
 export type SearchProjectPermissionsQueryVariables = Exact<{
@@ -29350,7 +29488,11 @@ export type SearchProjectPermissionsQuery = {
         description: string;
         entries: Array<ProjectPermissionEntry>;
         allUsers: boolean;
-        users: { __typename?: "GropiusUserConnection"; totalCount: number };
+        users: {
+            __typename?: "GropiusUserConnection";
+            totalCount: number;
+            nodes: Array<{ __typename?: "GropiusUser"; id: string; name: string }>;
+        };
     }>;
 };
 
@@ -29428,7 +29570,11 @@ export type FirstProjectPermissionsQuery = {
                       description: string;
                       entries: Array<ProjectPermissionEntry>;
                       allUsers: boolean;
-                      users: { __typename?: "GropiusUserConnection"; totalCount: number };
+                      users: {
+                          __typename?: "GropiusUserConnection";
+                          totalCount: number;
+                          nodes: Array<{ __typename?: "GropiusUser"; id: string; name: string }>;
+                      };
                   }>;
               };
           }
@@ -31805,6 +31951,7 @@ export type GetViewListQueryVariables = Exact<{
     count: Scalars["Int"]["input"];
     skip: Scalars["Int"]["input"];
     project: Scalars["ID"]["input"];
+    filter: ViewFilterInput;
 }>;
 
 export type GetViewListQuery = {
@@ -31877,7 +32024,12 @@ export type GetViewListQuery = {
                       description: string;
                       filterByTemplate: {
                           __typename?: "ComponentTemplateConnection";
-                          nodes: Array<{ __typename?: "ComponentTemplate"; id: string; name: string }>;
+                          nodes: Array<{
+                              __typename?: "ComponentTemplate";
+                              description: string;
+                              id: string;
+                              name: string;
+                          }>;
                       };
                   }>;
               };
@@ -31911,7 +32063,7 @@ export type GetViewListQuery = {
 export type GetFilteredViewListQueryVariables = Exact<{
     query: Scalars["String"]["input"];
     count: Scalars["Int"]["input"];
-    project: Scalars["ID"]["input"];
+    filter: ViewFilterInput;
 }>;
 
 export type GetFilteredViewListQuery = {
@@ -31923,7 +32075,7 @@ export type GetFilteredViewListQuery = {
         description: string;
         filterByTemplate: {
             __typename?: "ComponentTemplateConnection";
-            nodes: Array<{ __typename?: "ComponentTemplate"; id: string; name: string }>;
+            nodes: Array<{ __typename?: "ComponentTemplate"; description: string; id: string; name: string }>;
         };
     }>;
 };
@@ -32235,6 +32387,27 @@ export type DeleteViewMutationVariables = Exact<{
 
 export type DeleteViewMutation = { __typename?: "Mutation"; deleteView: { __typename: "DeleteNodePayload" } };
 
+export const OpenIssueCountFragmentDoc = gql`
+    fragment OpenIssueCount on Trackable {
+        openIssues: issues(filter: { state: { isOpen: { eq: true } } }) {
+            totalCount
+        }
+    }
+`;
+export const ComponentListItemInfoFragmentDoc = gql`
+    fragment ComponentListItemInfo on Component {
+        id
+        name
+        description
+        template {
+            id
+            name
+            description
+        }
+        ...OpenIssueCount
+    }
+    ${OpenIssueCountFragmentDoc}
+`;
 export const DefaultComponentPermissionInfoFragmentDoc = gql`
     fragment DefaultComponentPermissionInfo on ComponentPermission {
         id
@@ -32244,6 +32417,10 @@ export const DefaultComponentPermissionInfoFragmentDoc = gql`
         allUsers
         users {
             totalCount
+            nodes {
+                id
+                name: displayName
+            }
         }
     }
 `;
@@ -32289,6 +32466,10 @@ export const DefaultGlobalPermissionInfoFragmentDoc = gql`
         allUsers
         users {
             totalCount
+            nodes {
+                id
+                name: displayName
+            }
         }
     }
 `;
@@ -32443,6 +32624,10 @@ export const DefaultImsPermissionInfoFragmentDoc = gql`
         allUsers
         users {
             totalCount
+            nodes {
+                id
+                name: displayName
+            }
         }
     }
 `;
@@ -32464,6 +32649,11 @@ export const DefaultImsProjectInfoFragmentDoc = gql`
         ims {
             id
             name
+            template {
+                id
+                name
+                description
+            }
         }
         ...DefaultSyncPermissionTargetInfo
     }
@@ -32501,6 +32691,18 @@ export const DefaultInterfaceDefinitionInfoFragmentDoc = gql`
         }
         invisibleDerivedBy {
             totalCount
+        }
+    }
+`;
+export const InterfaceSpecificationListItemInfoFragmentDoc = gql`
+    fragment InterfaceSpecificationListItemInfo on InterfaceSpecification {
+        id
+        name
+        description
+        template {
+            id
+            name
+            description
         }
     }
 `;
@@ -32714,6 +32916,10 @@ export const DefaultProjectPermissionInfoFragmentDoc = gql`
         allUsers
         users {
             totalCount
+            nodes {
+                id
+                name: displayName
+            }
         }
     }
 `;
@@ -33367,13 +33573,6 @@ export const DefaultTimelineItemInfoFragmentDoc = gql`
     ${TitleChangedEventTimelineInfoFragmentDoc}
     ${TypeChangedEventTimelineInfoFragmentDoc}
 `;
-export const OpenIssueCountFragmentDoc = gql`
-    fragment OpenIssueCount on Trackable {
-        openIssues: issues(filter: { state: { isOpen: { eq: true } } }) {
-            totalCount
-        }
-    }
-`;
 export const DefaultViewInfoFragmentDoc = gql`
     fragment DefaultViewInfo on View {
         id
@@ -33655,29 +33854,23 @@ export const GetVersionedNodeDocument = gql`
     }
 `;
 export const GetComponentListDocument = gql`
-    query getComponentList($orderBy: [ComponentOrder!]!, $count: Int!, $skip: Int!) {
-        components(orderBy: $orderBy, first: $count, skip: $skip) {
+    query getComponentList($orderBy: [ComponentOrder!]!, $count: Int!, $skip: Int!, $filter: ComponentFilterInput!) {
+        components(orderBy: $orderBy, first: $count, skip: $skip, filter: $filter) {
             nodes {
-                id
-                name
-                description
-                ...OpenIssueCount
+                ...ComponentListItemInfo
             }
             totalCount
         }
     }
-    ${OpenIssueCountFragmentDoc}
+    ${ComponentListItemInfoFragmentDoc}
 `;
 export const GetFilteredComponentListDocument = gql`
-    query getFilteredComponentList($query: String!, $count: Int!) {
-        searchComponents(query: $query, first: $count) {
-            id
-            name
-            description
-            ...OpenIssueCount
+    query getFilteredComponentList($query: String!, $count: Int!, $filter: ComponentFilterInput!) {
+        searchComponents(query: $query, first: $count, filter: $filter) {
+            ...ComponentListItemInfo
         }
     }
-    ${OpenIssueCountFragmentDoc}
+    ${ComponentListItemInfoFragmentDoc}
 `;
 export const GetComponentDocument = gql`
     query getComponent($id: ID!) {
@@ -33809,10 +34002,11 @@ export const GetComponentPermissionListDocument = gql`
         $count: Int!
         $skip: Int!
         $component: ID!
+        $filter: ComponentPermissionFilterInput!
     ) {
         node(id: $component) {
             ... on Component {
-                permissions(orderBy: $orderBy, first: $count, skip: $skip) {
+                permissions(orderBy: $orderBy, first: $count, skip: $skip, filter: $filter) {
                     nodes {
                         ...DefaultComponentPermissionInfo
                     }
@@ -33824,12 +34018,8 @@ export const GetComponentPermissionListDocument = gql`
     ${DefaultComponentPermissionInfoFragmentDoc}
 `;
 export const GetFilteredComponentPermissionListDocument = gql`
-    query getFilteredComponentPermissionList($query: String!, $count: Int!, $component: ID!) {
-        searchComponentPermissions(
-            query: $query
-            first: $count
-            filter: { nodesWithPermission: { any: { id: { eq: $component } } } }
-        ) {
+    query getFilteredComponentPermissionList($query: String!, $count: Int!, $filter: ComponentPermissionFilterInput!) {
+        searchComponentPermissions(query: $query, first: $count, filter: $filter) {
             ...DefaultComponentPermissionInfo
         }
     }
@@ -34056,8 +34246,13 @@ export const DeleteComponentVersionDocument = gql`
     }
 `;
 export const GetGlobalPermissionListDocument = gql`
-    query getGlobalPermissionList($orderBy: [GlobalPermissionOrder!]!, $count: Int!, $skip: Int!) {
-        globalPermissions(orderBy: $orderBy, first: $count, skip: $skip) {
+    query getGlobalPermissionList(
+        $orderBy: [GlobalPermissionOrder!]!
+        $count: Int!
+        $skip: Int!
+        $filter: GlobalPermissionFilterInput
+    ) {
+        globalPermissions(orderBy: $orderBy, first: $count, skip: $skip, filter: $filter) {
             nodes {
                 ...DefaultGlobalPermissionInfo
             }
@@ -34067,8 +34262,8 @@ export const GetGlobalPermissionListDocument = gql`
     ${DefaultGlobalPermissionInfoFragmentDoc}
 `;
 export const GetFilteredGlobalPermissionListDocument = gql`
-    query getFilteredGlobalPermissionList($query: String!, $count: Int!) {
-        searchGlobalPermissions(query: $query, first: $count) {
+    query getFilteredGlobalPermissionList($query: String!, $count: Int!, $filter: GlobalPermissionFilterInput!) {
+        searchGlobalPermissions(query: $query, first: $count, filter: $filter) {
             ...DefaultGlobalPermissionInfo
         }
     }
@@ -34168,10 +34363,15 @@ export const DeleteRelationDocument = gql`
     }
 `;
 export const GetImsListDocument = gql`
-    query getIMSList($orderBy: [IMSOrder!]!, $count: Int!, $skip: Int!) {
-        imss(orderBy: $orderBy, first: $count, skip: $skip) {
+    query getIMSList($orderBy: [IMSOrder!]!, $count: Int!, $skip: Int!, $filter: IMSFilterInput!) {
+        imss(orderBy: $orderBy, first: $count, skip: $skip, filter: $filter) {
             nodes {
                 ...DefaultSyncPermissionTargetInfo
+                template {
+                    id
+                    name
+                    description
+                }
             }
             totalCount
         }
@@ -34179,9 +34379,14 @@ export const GetImsListDocument = gql`
     ${DefaultSyncPermissionTargetInfoFragmentDoc}
 `;
 export const GetFilteredImsListDocument = gql`
-    query getFilteredIMSList($query: String!, $count: Int!) {
-        searchIMSs(query: $query, first: $count) {
+    query getFilteredIMSList($query: String!, $count: Int!, $filter: IMSFilterInput!) {
+        searchIMSs(query: $query, first: $count, filter: $filter) {
             ...DefaultSyncPermissionTargetInfo
+            template {
+                id
+                name
+                description
+            }
         }
     }
     ${DefaultSyncPermissionTargetInfoFragmentDoc}
@@ -34265,10 +34470,16 @@ export const DeleteImsDocument = gql`
     }
 `;
 export const GetImsPermissionListDocument = gql`
-    query getIMSPermissionList($orderBy: [IMSPermissionOrder!]!, $count: Int!, $skip: Int!, $ims: ID!) {
+    query getIMSPermissionList(
+        $orderBy: [IMSPermissionOrder!]!
+        $count: Int!
+        $skip: Int!
+        $ims: ID!
+        $filter: IMSPermissionFilterInput!
+    ) {
         node(id: $ims) {
             ... on IMS {
-                permissions(orderBy: $orderBy, first: $count, skip: $skip) {
+                permissions(orderBy: $orderBy, first: $count, skip: $skip, filter: $filter) {
                     nodes {
                         ...DefaultIMSPermissionInfo
                     }
@@ -34280,12 +34491,8 @@ export const GetImsPermissionListDocument = gql`
     ${DefaultImsPermissionInfoFragmentDoc}
 `;
 export const GetFilteredImsPermissionListDocument = gql`
-    query getFilteredIMSPermissionList($query: String!, $count: Int!, $ims: ID!) {
-        searchIMSPermissions(
-            query: $query
-            first: $count
-            filter: { nodesWithPermission: { any: { id: { eq: $ims } } } }
-        ) {
+    query getFilteredIMSPermissionList($query: String!, $count: Int!, $filter: IMSPermissionFilterInput!) {
+        searchIMSPermissions(query: $query, first: $count, filter: $filter) {
             ...DefaultIMSPermissionInfo
         }
     }
@@ -34363,10 +34570,16 @@ export const GetImsProjectListFromImsDocument = gql`
     ${DefaultImsProjectInfoFragmentDoc}
 `;
 export const GetImsProjectListFromTrackableDocument = gql`
-    query getIMSProjectListFromTrackable($orderBy: [IMSProjectOrder!]!, $count: Int!, $skip: Int!, $trackable: ID!) {
+    query getIMSProjectListFromTrackable(
+        $orderBy: [IMSProjectOrder!]!
+        $count: Int!
+        $skip: Int!
+        $trackable: ID!
+        $filter: IMSProjectFilterInput!
+    ) {
         node(id: $trackable) {
             ... on Trackable {
-                syncsTo(orderBy: $orderBy, first: $count, skip: $skip) {
+                syncsTo(orderBy: $orderBy, first: $count, skip: $skip, filter: $filter) {
                     nodes {
                         ...DefaultIMSProjectInfo
                     }
@@ -34485,10 +34698,11 @@ export const GetInterfaceDefinitionListDocument = gql`
         $count: Int!
         $skip: Int!
         $componentVersion: ID!
+        $filter: InterfaceDefinitionFilterInput!
     ) {
         node(id: $componentVersion) {
             ... on ComponentVersion {
-                interfaceDefinitions(orderBy: $orderBy, first: $count, skip: $skip) {
+                interfaceDefinitions(orderBy: $orderBy, first: $count, skip: $skip, filter: $filter) {
                     nodes {
                         ...DefaultInterfaceDefinitionInfo
                         interfaceSpecificationVersion {
@@ -34498,6 +34712,11 @@ export const GetInterfaceDefinitionListDocument = gql`
                                 id
                                 name
                                 description
+                                template {
+                                    id
+                                    name
+                                    description
+                                }
                             }
                         }
                     }
@@ -34509,27 +34728,27 @@ export const GetInterfaceDefinitionListDocument = gql`
     ${DefaultInterfaceDefinitionInfoFragmentDoc}
 `;
 export const GetFilteredInterfaceDefinitionListDocument = gql`
-    query getFilteredInterfaceDefinitionList($query: String!, $count: Int!, $componentVersion: ID!) {
-        searchInterfaceSpecifications(
-            query: $query
-            first: $count
-            filter: {
-                versions: {
-                    any: { interfaceDefinitions: { any: { componentVersion: { id: { eq: $componentVersion } } } } }
-                }
-            }
-        ) {
+    query getFilteredInterfaceDefinitionList(
+        $query: String!
+        $count: Int!
+        $specificationFilter: InterfaceSpecificationFilterInput!
+        $versionFilter: InterfaceSpecificationVersionFilterInput!
+        $definitionFilter: InterfaceDefinitionFilterInput!
+    ) {
+        searchInterfaceSpecifications(query: $query, first: $count, filter: $specificationFilter) {
             id
             name
             description
-            versions(
-                filter: { interfaceDefinitions: { any: { componentVersion: { id: { eq: $componentVersion } } } } }
-                first: $count
-            ) {
+            template {
+                id
+                name
+                description
+            }
+            versions(filter: $versionFilter, first: $count) {
                 nodes {
                     id
                     version
-                    interfaceDefinitions(filter: { componentVersion: { id: { eq: $componentVersion } } }) {
+                    interfaceDefinitions(filter: $definitionFilter) {
                         nodes {
                             ...DefaultInterfaceDefinitionInfo
                         }
@@ -34564,29 +34783,32 @@ export const GetInterfaceSpecificationListDocument = gql`
         $count: Int!
         $skip: Int!
         $component: ID!
+        $filter: InterfaceSpecificationFilterInput!
     ) {
         node(id: $component) {
             ... on Component {
-                interfaceSpecifications(orderBy: $orderBy, first: $count, skip: $skip) {
+                interfaceSpecifications(orderBy: $orderBy, first: $count, skip: $skip, filter: $filter) {
                     nodes {
-                        id
-                        name
-                        description
+                        ...InterfaceSpecificationListItemInfo
                     }
                     totalCount
                 }
             }
         }
     }
+    ${InterfaceSpecificationListItemInfoFragmentDoc}
 `;
 export const GetFilteredInterfaceSpecificationListDocument = gql`
-    query getFilteredInterfaceSpecificationList($query: String!, $count: Int!, $component: ID!) {
-        searchInterfaceSpecifications(query: $query, first: $count, filter: { component: { id: { eq: $component } } }) {
-            id
-            name
-            description
+    query getFilteredInterfaceSpecificationList(
+        $query: String!
+        $count: Int!
+        $filter: InterfaceSpecificationFilterInput!
+    ) {
+        searchInterfaceSpecifications(query: $query, first: $count, filter: $filter) {
+            ...InterfaceSpecificationListItemInfo
         }
     }
+    ${InterfaceSpecificationListItemInfoFragmentDoc}
 `;
 export const GetInterfaceSpecificationGeneralDetailsDocument = gql`
     query getInterfaceSpecificationGeneralDetails($id: ID!) {
@@ -35725,10 +35947,16 @@ export const DeleteProjectDocument = gql`
     }
 `;
 export const GetProjectPermissionListDocument = gql`
-    query getProjectPermissionList($orderBy: [ProjectPermissionOrder!]!, $count: Int!, $skip: Int!, $project: ID!) {
+    query getProjectPermissionList(
+        $orderBy: [ProjectPermissionOrder!]!
+        $count: Int!
+        $skip: Int!
+        $project: ID!
+        $filter: ProjectPermissionFilterInput!
+    ) {
         node(id: $project) {
             ... on Project {
-                permissions(orderBy: $orderBy, first: $count, skip: $skip) {
+                permissions(orderBy: $orderBy, first: $count, skip: $skip, filter: $filter) {
                     nodes {
                         ...DefaultProjectPermissionInfo
                     }
@@ -35740,12 +35968,8 @@ export const GetProjectPermissionListDocument = gql`
     ${DefaultProjectPermissionInfoFragmentDoc}
 `;
 export const GetFilteredProjectPermissionListDocument = gql`
-    query getFilteredProjectPermissionList($query: String!, $count: Int!, $project: ID!) {
-        searchProjectPermissions(
-            query: $query
-            first: $count
-            filter: { nodesWithPermission: { any: { id: { eq: $project } } } }
-        ) {
+    query getFilteredProjectPermissionList($query: String!, $count: Int!, $filter: ProjectPermissionFilterInput!) {
+        searchProjectPermissions(query: $query, first: $count, filter: $filter) {
             ...DefaultProjectPermissionInfo
         }
     }
@@ -35915,12 +36139,17 @@ export const SearchGropiusUsersDocument = gql`
     ${DefaultUserInfoFragmentDoc}
 `;
 export const GetViewListDocument = gql`
-    query getViewList($orderBy: [ViewOrder!]!, $count: Int!, $skip: Int!, $project: ID!) {
+    query getViewList($orderBy: [ViewOrder!]!, $count: Int!, $skip: Int!, $project: ID!, $filter: ViewFilterInput!) {
         node(id: $project) {
             ... on Project {
-                views(orderBy: $orderBy, first: $count, skip: $skip) {
+                views(orderBy: $orderBy, first: $count, skip: $skip, filter: $filter) {
                     nodes {
                         ...DefaultViewInfo
+                        filterByTemplate {
+                            nodes {
+                                description
+                            }
+                        }
                     }
                     totalCount
                 }
@@ -35930,9 +36159,14 @@ export const GetViewListDocument = gql`
     ${DefaultViewInfoFragmentDoc}
 `;
 export const GetFilteredViewListDocument = gql`
-    query getFilteredViewList($query: String!, $count: Int!, $project: ID!) {
-        searchViews(query: $query, first: $count, filter: { project: { id: { eq: $project } } }) {
+    query getFilteredViewList($query: String!, $count: Int!, $filter: ViewFilterInput!) {
+        searchViews(query: $query, first: $count, filter: $filter) {
             ...DefaultViewInfo
+            filterByTemplate {
+                nodes {
+                    description
+                }
+            }
         }
     }
     ${DefaultViewInfoFragmentDoc}
